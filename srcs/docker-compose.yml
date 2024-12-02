@@ -4,7 +4,7 @@ volumes:
         driver: local                                       # Controlador por defecto de manejo de volumenes de Docker (necesario declararlo si vamos a editarlo con "driver_opts").
         driver_opts:
             type: none                                      # Volumen sin extension.
-            device: ./resources/mariadb                     # Directorio del volumen. Asi sabremos que "mariadb_data" es como un quick_access hacia esa ruta.
+            device: resources/mariadb                       # Directorio del volumen. Asi sabremos que "mariadb_data" es como un quick_access hacia esa ruta.
             o: bind                                         # Tipo "bind mount", para que los cambios en la ruta "device" se ejecuten en el servidor.
 
 networks:                                                   # ...
@@ -18,7 +18,7 @@ services:                                                   # Apps que vamos a d
             container_name: mariadb_inception               # Nombre del contenedor.
             env_file: .env                                  # Archivo que contiene las vatiables de entorno (si no las queremos poner aqui con "environment").
             build:                                          # Contruccion de informacion para el Dockerfile:
-                context: ./resources/mariadb                # Ruta local de configuracion de MariaDB.
+                context: resources/mariadb                  # Ruta local de configuracion de MariaDB.
                 dockerfile: Dockerfile                      # Configuracion a traves de un "Dockerfile" dentro de esa ruta.
                 args:                                       # Sustitucion de "variables de entorno VS argumentos" para el archivo de configuracion.
                     MARIADB_NAME: ${MARIADB_NAME}
@@ -31,7 +31,8 @@ services:                                                   # Apps que vamos a d
                 - "3306:3306"
             networks:                                       # Red local virtual.
                 - inception_network
-            restart: always                                 # Modo de reinicio en caso de cierre inesperado.
+            #restart: always                                 # Modo de reinicio en caso de cierre inesperado.
+            tty: true                                       # Muestra una pseudo-terminal.
 
 #    nginx:
 #        container_name: nginx_inception
