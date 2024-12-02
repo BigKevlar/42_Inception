@@ -16,6 +16,7 @@ services:                                                   # Apps que vamos a d
 
     mariadb:
             container_name: mariadb_inception               # Nombre del contenedor.
+            image: mariadb_42image                          # Imagen para MariaDB.
             env_file: .env                                  # Archivo que contiene las vatiables de entorno (si no las queremos poner aqui con "environment").
             build:                                          # Contruccion de informacion para el Dockerfile:
                 context: resources/mariadb                  # Ruta local de configuracion de MariaDB.
