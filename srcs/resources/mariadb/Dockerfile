@@ -16,36 +16,21 @@ ENV MARIADB_NAME=${MARIADB_NAME} \
 RUN apt-get update && \
     apt-get install mariadb-server -y
 
-# COPIAMOS/SUSTITUIMOS EL ARCHIVO DE CONFIGURACION DE MYSQL POR EL NUESTRO PERSONALIZADO.
+# SUSTITUIMOS EL ARCHIVO DE CONFIGURACION DE MYSQL POR EL NUESTRO PERSONALIZADO.
 COPY ./my.cnf /etc/mysql/my.cnf
+
+# HACEMOS LO MISMO CON EL ARCHIVO DE INICIALIZACION DE LA BASE DE DATOS (ENTRYPOINT).
+COPY ./init_db.sh /docker-entrypoint-initdb.d/init_db.sh
 
 #   - CREAMOS DIRECTORIO PARA MARIADB.
 #   - CAMBIAMOS EL PROPIETARIO PARA QUE MYSQL TENGA PERMISOS EN MARIADB. (o cambiamos permisos??????)
-RUN mkdir -p /var/run/mysqld/ && \
-    chmod -R 777 /var/run/mysqld/
+RUN chmod 777 -R /docker-entrypoint-initdb.d/init_db.sh && \
+    chmod 777 -R /var/lib/mysql && \
+    mkdir -p /var/run/mysqld/ && \
+    chmod 777 -R /var/run/mysqld/
 
 # EXPONEMOS EL PUERTO ESTANDAR DE MARIADB.
 EXPOSE 3306
-
-# EJECUCION DE COMANDOS:
-#   - INICIAMOS MARIADB
-#   - CREAMOS EL FICHERO DE LA BASE DE DATOS SI NO EXISTE.
-#   - CREAMOS EL USUARIO Y CONTRASEÑA SI NO EXISTE.
-#   - ASIGNAMOS PERMISOS AL USUARIO.
-#   - ASIGNAMOS PERMISOS DEL USUARIO SOBRE LA BASE DE DATOS.
-#   - CAMBIAMOS LA CONTRASEÑA DE ROOT POR LA QUE TENEMOS EN EN .ENV.
-#   - APLICAMOS LOS CAMBIOS EJECUTANDO EL ARCHIVO "MSQL_DB.SQL".
-RUN service mariadb start && \
-    echo "CREATE DATABASE IF NOT EXISTS ${MARIADB_NAME};" \
-    > msql_db.sql && \
-    echo "CREATE USER IF NOT EXISTS '${MARIADB_USER}'@'%' IDENTIFIED BY '${MARIADB_PASS}' ;" \
-    >> msql_db.sql && \
-    echo "GRANT ALL PRIVILEGES ON ${MARIADB_NAME}.* TO '${MARIADB_USER}'@'%' ;" \
-    >> msql_db.sql && \
-    echo "FLUSH PRIVILEGES;" \
-    >> msql_db.sql && \
-    echo "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIADB_ROOT_PASS}' ;" \
-    >> msql_db.sql && mariadb < msql_db.sql
 
 # DEFINIMOS EL COMANDO PARA INICIAR MARIADB.
 CMD ["mysqld"]
