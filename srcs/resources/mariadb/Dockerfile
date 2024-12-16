@@ -1,36 +1,43 @@
-# SELECCIONAMOS IMAGEN A MONTAR SOBRE LA CUAL INSTALAREMOS EL BACKEND MARIADB.
+# SELECCIONAMOS IMAGEN A MONTAR SOBRE LA CUAL INSTALAREMOS MARIADB.
 FROM debian:bullseye
 
 # SELECCIONAMOS LOS "ARGUMENTOS DE CONSTRUCCION" QUE SERVIRAN PARA INICIALIZAR LAS VARIABLES DE ENTORNO.
 ARG MARIADB_NAME
 ARG MARIADB_ROOT_PASS
 ARG MARIADB_USER
-ARG MARIADB_USER_PASS
+ARG MARIADB_PASS
 
 ENV MARIADB_NAME=${MARIADB_NAME} \
     MARIADB_ROOT_PASS=$MARIADB_ROOT_PASS \
     MARIADB_USER=${MARIADB_USER} \
-    MARIADB_USER_PASS=${MARIADB_USER_PASS}
+    MARIADB_PASS=${MARIADB_PASS}
 
 # UNA VEZ MONTADA LA IMAGEN DE DEBIAN, Y DENTRO DE ELLA, ACTUALIZAMOS E INSTALAMOS MARIADB.
-RUN apt-get update && \
-    apt-get install mariadb-server -y
+RUN apt-get update && apt-get install mariadb-server -y
 
 # SUSTITUIMOS EL ARCHIVO DE CONFIGURACION DE MYSQL POR EL NUESTRO PERSONALIZADO.
 COPY ./my.cnf /etc/mysql/my.cnf
 
-# HACEMOS LO MISMO CON EL ARCHIVO DE INICIALIZACION DE LA BASE DE DATOS (ENTRYPOINT).
-COPY ./init_db.sh /docker-entrypoint-initdb.d/init_db.sh
-
-#   - CREAMOS DIRECTORIO PARA MARIADB.
-#   - CAMBIAMOS EL PROPIETARIO PARA QUE MYSQL TENGA PERMISOS EN MARIADB. (o cambiamos permisos??????)
-RUN chmod 777 -R /docker-entrypoint-initdb.d/init_db.sh && \
-    chmod 777 -R /var/lib/mysql && \
+# DAMOS PERMISOS AL ENTRIPOINT Y A LA CARPETA DE MYSQL, CREAMOS UNA CARPETA PARA EL SOCKET DE MYSQL Y LE DAMOS PERMISOS.
+RUN chmod 777 -R /var/lib/mysql && \
     mkdir -p /var/run/mysqld/ && \
     chmod 777 -R /var/run/mysqld/
+
+#RUN mkdir -p /var/lib/mysql/ib_buffer_pool
+
+RUN chown -R mysql:mysql /var/lib/mysql /var/run/mysqld/
 
 # EXPONEMOS EL PUERTO ESTANDAR DE MARIADB.
 EXPOSE 3306
 
-# DEFINIMOS EL COMANDO PARA INICIAR MARIADB.
+RUN service mariadb start && mysql_upgrade && \
+    echo "CREATE DATABASE IF NOT EXISTS $MARIADB_NAME;" > msql_db.sql && \ 
+    echo "CREATE USER IF NOT EXISTS '$MARIADB_USER'@'%' IDENTIFIED BY '$MARIADB_PASS' ;" >> msql_db.sql && \
+    echo "GRANT ALL PRIVILEGES ON $MARIADB_NAME.* TO '$MARIADB_USER'@'%' ;" >> msql_db.sql && \
+    echo "FLUSH PRIVILEGES;" >> msql_db.sql && \
+    echo "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MARIADB_ROOT_PASS' ;" >> msql_db.sql && \
+    echo "RUNNING MARIADB" && \
+    mariadb < msql_db.sql
+
+# DEFINIMOS EL COMANDO INICIAL PARA CORRER MARIADB.
 CMD ["mysqld"]
