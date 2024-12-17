@@ -35,10 +35,10 @@ RUN apt-get update -y && apt-get install -y \
     curl \
     tar
 
-RUN useradd WP_USER && groupadd WP_GROUP && usermod -aG WP_GROUP WP_USER
-RUN useradd WP_ADMIN && usermod -aG WP_GROUP WP_ADMIN && usermod -aG sudo WP_ADMIN
+RUN useradd $WP_USER && groupadd $WP_GROUP && usermod -aG $WP_GROUP $WP_USER
+RUN useradd $WP_ADMIN && usermod -aG $WP_GROUP $WP_ADMIN && usermod -aG sudo $WP_ADMIN
 
-RUN mkdir -p /var/www/html && chown -R WP_USER:WP_GROUP /var/www/html
+RUN mkdir -p /var/www/html && chown -R $WP_USER:$WP_GROUP /var/www/html
 
 COPY ./init_wp.sh /init_wp.sh
 COPY ./php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf
