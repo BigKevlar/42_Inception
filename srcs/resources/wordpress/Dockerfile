@@ -36,6 +36,10 @@ RUN apt-get update -y && apt-get install -y \
     curl \
     tar
 
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
+
 RUN useradd "$WP_USER" && groupadd "$WP_GROUP" && usermod -aG "$WP_GROUP" "$WP_USER"
 RUN useradd $WP_ADMIN && usermod -aG $WP_GROUP $WP_ADMIN && usermod -aG sudo $WP_ADMIN
 
