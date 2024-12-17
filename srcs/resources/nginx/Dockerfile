@@ -6,7 +6,7 @@ ARG DOMAIN_NAME
 ENV DOMAIN_NAME=${DOMAIN_NAME}
 
 # EJECUTAMOS LOS PRIMEROS COMANDOS.
-RUN apt update -y && apt upgrade -y && apt install nginx openssl -y
+RUN apt-get update -y && apt-get install -y && apt-get install nginx openssl -y
 
 # COPIAMOS...
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
@@ -24,5 +24,4 @@ EXPOSE 443
 #RUN sed -i "s/password_here/$MARIADB_PASS/g" /etc/nginx/conf.d/default.conf
 #RUN sed -i "s/localhost/$MARIADB_NAME/g" /etc/nginx/conf.d/default.conf
 
-#
-CMD ["nginx", "-g", "daemon off";]
+CMD ["nginx", "-g", "daemon off;"]
