@@ -66,15 +66,21 @@ services:                                                   # Apps que vamos a d
         depends_on:
             - mariadb
         restart: always
-#
-#    nginx:
-#        container_name: nginx_inception
-#        build:
-#            context: ./resources/nginx
-#            dockerfile: Dockerfile
-#        volumes:
-#            - wordpress_data:/var/www/html
-#        ports:
-#            - 443:443
-#        depends_on:
-#            - wordpress
+    
+    nginx:
+        container_name: nginx_inception
+        image: nginx_42image
+        env_file: .env
+        build:
+            context: ./resources/nginx
+            dockerfile: Dockerfile
+            args:
+                DOMAIN_NAME: ${DOMAIN_NAME}
+        volumes:
+            - wordpress_data:/var/www/html
+        ports:
+            - 443:443
+        networks:
+            - inception_network
+        depends_on:
+            - wordpress
