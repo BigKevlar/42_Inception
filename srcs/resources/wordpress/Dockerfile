@@ -18,12 +18,23 @@ RUN apt-get update -y && apt-get install -y \
     php7.4-fpm \
     unzip \
     wget \
-    curl 
+    curl \
+    tar
 
 RUN useradd WP_USER && groupadd WP_GROUP && usermod -aG WP_GROUP WP_USER
 RUN useradd WP_ADMIN && usermod -aG WP_GROUP WP_ADMIN && usermod -aG sudo WP_ADMIN
 
-RUN mkdir -p /var/www/html && chown WP_USER:WP_GROUP /var/www/html
+RUN mkdir -p /var/www/html && chown -R WP_USER:WP_GROUP /var/www/html
+
+COPY ./init_wp.sh /init_wp.sh
+COPY ./php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf
+COPY ./wp-config.php /wp-config.php
+
+RUN wget https://wordpress.org/latest.tar.gz -O /tmp/wordpress.tar.gz && \
+    tar -xzf /tmp/wordpress.tar.gz -C /tmp && \
+    mv /tmp/wordpress/* /var/www/html
+
+RUN chmod +x init_wp.sh
 
 EXPOSE 9000
 
