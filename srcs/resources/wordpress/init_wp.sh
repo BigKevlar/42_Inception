@@ -12,8 +12,6 @@ wp core install --allow-root --path=/var/www/html \
 	--admin_user=$WP_ADMIN --admin_password=$WP_ADMIN_PASS \
 	--admin_email=$WP_ADMIN_MAIL
 
-wp user create $WP_USER_USER $WP_USER_MAIL --user_pass=$WP_PASS --allow-root --role=author --path=/var/www/html
-
 php-fpm7.4 -y /etc/php/7.4/fpm/php-fpm.conf -F
 
 echo "< SI VES ESTE ECHO ES QUE NO SE HA INICIADO PHP... >"
