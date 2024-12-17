@@ -28,7 +28,7 @@ RUN mkdir -p /var/www/html && chown -R WP_USER:WP_GROUP /var/www/html
 
 COPY ./init_wp.sh /init_wp.sh
 COPY ./php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf
-COPY ./wp-config.php /wp-config.php
+COPY ./wp-config.php /var/www/html/wp-config.php
 
 RUN wget https://wordpress.org/latest.tar.gz -O /tmp/wordpress.tar.gz && \
     tar -xzf /tmp/wordpress.tar.gz -C /tmp && \
