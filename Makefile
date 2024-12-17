@@ -16,7 +16,7 @@ down:
 
 fclean:
 	docker-compose -f ./srcs/docker-compose.yml down
-	docker system prune --all --volumes
+	docker system prune --all --volumes -y
 	chmod 777 ~/data
 	rm -rf ~/data
 
