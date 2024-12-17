@@ -19,9 +19,6 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/n
 # 
 EXPOSE 443
 
-#RUN sed -i "s/database_name_here/$MARIADB_NAME/g" /etc/nginx/conf.d/default.conf
-#RUN sed -i "s/username_here/$MARIADB_USER/g" /etc/nginx/conf.d/default.conf
-#RUN sed -i "s/password_here/$MARIADB_PASS/g" /etc/nginx/conf.d/default.conf
-#RUN sed -i "s/localhost/$MARIADB_NAME/g" /etc/nginx/conf.d/default.conf
+RUN sed -i "s/PATATA/$DOMAIN_NAME/g" /etc/nginx/conf.d/default.conf
 
 CMD ["nginx", "-g", "daemon off;"]
