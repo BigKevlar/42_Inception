@@ -1,0 +1,15 @@
+MARIADB_NAME=patata
+MARIADB_USER=patata
+MARIADB_PASS=patata
+MARIADB_ROOT_PASS=patata
+
+WP_TITLE=patata
+WP_GROUP=patata
+WP_ADMIN=patata
+WP_ADMIN_PASS=patata
+WP_ADMIN_MAIL=patata
+WP_USER=patata
+WP_USER_PASS=patata
+WP_USER_MAIL=patata
+
+DOMAIN_NAME=patata
