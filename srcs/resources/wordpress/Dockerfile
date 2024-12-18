@@ -31,6 +31,9 @@ ENV MARIADB_NAME=${MARIADB_NAME} \
 RUN apt-get update -y && apt-get install -y \
     php7.4-fpm \
     php7.4-mysql \
+    php7.4-curl \
+    php7.4-gd \
+    php7.4-mbstring \
     unzip \
     wget \
     curl \
